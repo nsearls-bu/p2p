@@ -1,6 +1,5 @@
 <script>
 
-var right = isMine ? 'right' : 'left'
 export default {
   name: "Message",
   props: [
@@ -9,6 +8,10 @@ export default {
     "uid", // Background variant of the box
     "isMine",
   ],
+  data: (instance) => ({
+    // To keep the state of the input content
+    right: instance.isMine ? 'right' : 'left'
+  }),
 };
 </script>
 
