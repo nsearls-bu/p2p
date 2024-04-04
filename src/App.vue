@@ -1,35 +1,35 @@
-import {v4 as uuid} from 'uuid';
 <script>
-import {v4 as uuid} from 'uuid'
-export default {
-  name: "App",
+import { v4 as uuid } from 'uuid'
+import ChatBox from './components/ChatBox.vue'
+import Message from './components/Message.vue'
 
+export default {
+  name: 'App',
+  components: { ChatBox, Message },
   computed: {
     console: () => console,
-    window: () => window,
+    window: () => window
   },
   data: () => ({
     user: undefined,
-    messages: [],
+    messages: []
   }),
   mounted() {
-    this.console.log('hello')
-    this.user = { name: "myname", uid: uuid() };
+    this.user = { name: 'myname', uid: uuid() }
   },
   methods: {
     handleSubmit(event, text) {
-      this.console.log(text)
-      event.preventDefault();
+      event.preventDefault()
       const createChat = (text) => ({
         text,
         uid: this.user?.uid,
-        author: this.user?.name,
-      });
-      this.messages = [...this.messages, createChat(text)];
-
-    },
-  },
-};
+        author: this.user?.name
+      })
+      
+      this.messages = [...this.messages, createChat(text)]
+    }
+  }
+}
 </script>
 
 <template>
@@ -51,13 +51,13 @@ export default {
 
 <style>
 @font-face {
-  font-family: "Georama";
-  src: url("./assets/Georama.ttf");
+  font-family: 'Georama';
+  src: url('./assets/Georama.ttf');
 }
 
 @font-face {
-  font-family: "Georama";
-  src: url("./assets/Georama.ttf");
+  font-family: 'Georama';
+  src: url('./assets/Georama.ttf');
   font-weight: bold;
 }
 
@@ -66,7 +66,7 @@ export default {
 }
 
 html {
-  font-family: "Georama", sans-serif;
+  font-family: 'Georama', sans-serif;
 }
 
 body {

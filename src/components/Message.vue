@@ -1,12 +1,12 @@
 <script>
 
 export default {
-  name: "Message",
+  name: 'MessageBubble',
   props: [
-    "text", // Content of the message
-    "author", // Author of the message
-    "uid", // Background variant of the box
-    "isMine",
+    'text', // Content of the message
+    'author', // Author of the message
+    'uid', // Background variant of the box
+    'isMine',
   ],
   data: (instance) => ({
     // To keep the state of the input content

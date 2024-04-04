@@ -1,9 +1,10 @@
+
 <script>
 export default {
-  name: "ChatBox",
+  name: 'ChatBox',
   data: () => ({
     // To keep the state of the input content
-    text: "",
+    text: '',
   }),
 
   methods: {
@@ -11,14 +12,15 @@ export default {
     submit(event) {
       // This fires an event which we will handle
       // in the parent component
-      this.$emit("submit-Chat", event, this.text);
-      this.text = "";
+      this.$emit('submit-Chat', event, this.text);
+      this.text = '';
     },
   },
 };
 </script>
 
 <template>
+
   <form class="chat-box" @submit="submit">
     <input v-model="text" placeholder="Write a message" type="text" />
     <button :disabled="text === ''">Send</button>
