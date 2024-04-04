@@ -2,7 +2,7 @@
 import { v4 as uuid } from 'uuid'
 import ChatBox from './components/ChatBox.vue'
 import Message from './components/Message.vue'
-
+import axios from 'axios'
 export default {
   name: 'App',
   components: { ChatBox, Message },
@@ -19,13 +19,18 @@ export default {
   },
   methods: {
     handleSubmit(event, text) {
+      const API_PORT = import.meta.env.VITE_API_PORT
+
       event.preventDefault()
       const createChat = (text) => ({
         text,
         uid: this.user?.uid,
         author: this.user?.name
       })
-      
+      axios
+        .post('http://localhost:' + API_PORT + '/send-message', { message: text, user_id: this.user?.uid })
+        .then((response) => (this.console.log('response')))
+
       this.messages = [...this.messages, createChat(text)]
     }
   }

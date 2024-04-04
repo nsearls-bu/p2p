@@ -5,12 +5,11 @@ import swarm from 'discovery-swarm'
 import getPort from 'get-port'
 import sqlite3 from 'sqlite3'
 import { startSwarm, sendMessage } from './swarm'
-import net from 'net'
+// import cors from 'cors'
 const app = express()
 // const PORT = await getPort()
 var args = process.argv.slice(2)
 var PORT = args[0]
-const server = net.createServer()
 
 // Middleware to parse JSON
 app.use(bodyParser.json())
@@ -49,6 +48,7 @@ app.post('/send-message', (req, res) => {
 
 // Endpoint to retrieve messages
 app.get('/get-messages', (req, res) => {
+  console.log(req)
   db.all('SELECT * FROM messages', (err, rows) => {
     if (err) {
       return res.status(500).json({ error: 'Failed to retrieve messages' })
@@ -60,8 +60,8 @@ app.get('/get-messages', (req, res) => {
 // Start the server
 
 app.listen(PORT, () => {
-  startSwarm((data,user_id) => {
-    insertMessage(data,user_id);
+  startSwarm((data, user_id) => {
+    insertMessage(data, user_id)
   })
   console.log(`Server is running on http://localhost:${PORT}`)
 })
