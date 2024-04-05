@@ -10,9 +10,7 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/",
-    "serve": "tsx watch server.ts",
-    "start": "concurrently \"vite\" \"tsx watch server.ts $VITE_API_PORT\""
+    "format": "prettier --write src/"
   },
   "dependencies": {
     "axios": "^1.6.8",
@@ -21,10 +19,13 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "discovery-swarm": "^6.1.0",
+    "ejs": "^3.1.9",
     "express": "^4.19.2",
     "get-port": "^7.1.0",
     "nodemon": "^3.1.0",
     "portfinder": "^1.0.32",
+    "simple-peer": "^9.11.1",
+    "socket.io": "^4.7.5",
     "sqlite3": "^5.1.7",
     "ts-node": "^10.9.2",
     "tsx": "^4.7.1",

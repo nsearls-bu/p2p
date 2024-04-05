@@ -2,36 +2,81 @@
 import { v4 as uuid } from 'uuid'
 import ChatBox from './components/ChatBox.vue'
 import Message from './components/Message.vue'
-import axios from 'axios'
+import ConnectForm from './components/ConnectForm.vue'
+
 export default {
   name: 'App',
-  components: { ChatBox, Message },
+  components: { ChatBox, Message, ConnectForm },
   computed: {
     console: () => console,
     window: () => window
   },
   data: () => ({
     user: undefined,
-    messages: []
+    messages: [],
+    p: new SimplePeer({
+      initiator: true,
+      trickle: false,
+      channelConfig: { negotiated: true, id: 0 },
+      channelName: 'cool-channel',
+      config: {
+        config: { iceServers: [] }
+      }
+    }),
+    connected: false
   }),
   mounted() {
     this.user = { name: 'myname', uid: uuid() }
+    this.p.on('error', (err) => console.log('error', err))
+
+    this.p.on('signal', (data) => {
+      console.log('SIGNAL', JSON.stringify(data))
+    })
+
+    this.p.on('connect', () => {
+      console.log('CONNECT')
+      this.connected = true
+    })
+    this.p.on('close', () => {
+      console.log('CLOSED')
+      this.connected = false
+    })
+
+    this.p.on('data', (data) => {
+      this.console.log('Received: ' + data)
+      const createChat = (text) => {
+        const decoded = new TextDecoder().decode(text)
+        return {
+          text: decoded,
+          uid: '-1',
+          author: 'someone else'
+        }
+      }
+      this.console.log(createChat(data))
+      this.messages = [...this.messages, createChat(data)]
+    })
   },
   methods: {
     handleSubmit(event, text) {
-      const API_PORT = import.meta.env.VITE_API_PORT
-
       event.preventDefault()
       const createChat = (text) => ({
         text,
         uid: this.user?.uid,
         author: this.user?.name
       })
-      axios
-        .post('http://localhost:' + API_PORT + '/send-message', { message: text, user_id: this.user?.uid })
-        .then((response) => (this.console.log('response')))
-
+      if (this.connected) {
+        this.p.send(text)
+        this.console.log('Sending to peer: ' + text)
+      }
       this.messages = [...this.messages, createChat(text)]
+    },
+    handleConnect(event, text) {
+      this.p.signal(text)
+      this.console.log(text)
+    },
+    handleInitiator(initiator) {
+      this.p.initiator = initiator
+      this.console.log(this.p)
     }
   }
 }
@@ -39,6 +84,7 @@ export default {
 
 <template>
   <div class="app">
+    <ConnectForm @connect="handleConnect" @initiator="handleInitiator" />
     <div class="messages">
       <Message
         v-for="message in messages"
@@ -46,7 +92,7 @@ export default {
         :text="message.text"
         :author="message.author"
         :uid="message.uid"
-        :isMine="myuid == uid"
+        :isMine="user.uid == message.uid"
       />
     </div>
 

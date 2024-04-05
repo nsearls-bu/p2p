@@ -1,22 +1,21 @@
 <script>
-
 export default {
   name: 'MessageBubble',
   props: [
     'text', // Content of the message
     'author', // Author of the message
     'uid', // Background variant of the box
-    'isMine',
+    'isMine'
   ],
   data: (instance) => ({
     // To keep the state of the input content
     right: instance.isMine ? 'right' : 'left'
-  }),
-};
+  })
+}
 </script>
 
 <template>
-  <div :class="['message', {right}, { isMine }]">
+  <div :class="['message', { right }, { isMine }]">
     <h5>{{ author }}</h5>
     {{ text }}
   </div>
@@ -32,7 +31,6 @@ export default {
 
 .message.right.isMine {
   background: #e7e7e7;
-
 }
 h5 {
   margin: 0 0 0.5rem 0;
