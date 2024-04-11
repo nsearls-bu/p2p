@@ -10,6 +10,7 @@
 <script>
 export default {
   data() {
+    // Create text and toggle states
     return {
       text: '',
       toggled: true
@@ -22,6 +23,7 @@ export default {
       this.$emit('connect', event, this.text)
     },
     onToggle() {
+      // Toggle init button on or off
       this.toggled = !this.toggled
       this.$emit('initiator', this.toggled)
     }

@@ -1,4 +1,5 @@
 <script>
+// Importing necessary modules and components
 import { v4 as uuid } from 'uuid'
 import ChatBox from './components/ChatBox.vue'
 import Message from './components/Message.vue'
@@ -6,15 +7,19 @@ import ConnectForm from './components/ConnectForm.vue'
 
 export default {
   name: 'App',
+  // Registering components used in the template
   components: { ChatBox, Message, ConnectForm },
+  // Computed properties
   computed: {
-    console: () => console,
-    window: () => window
+    console: () => console, // Access to console object for debugging
+    window: () => window // Access to window object
   },
+  // Data initialization
   data: () => ({
-    user: undefined,
-    messages: [],
+    user: undefined, // Current user
+    messages: [], // Array to store chat messages
     p: new SimplePeer({
+      // Peer connection configuration
       initiator: true,
       trickle: false,
       channelConfig: { negotiated: true, id: 0 },
@@ -23,25 +28,28 @@ export default {
         config: { iceServers: [] }
       }
     }),
-    connected: false
+    connected: false // Flag to indicate if connected to peer
   }),
   mounted() {
+    // Generating a unique user ID
     this.user = { name: 'myname', uid: uuid() }
+    // Print connection on error
     this.p.on('error', (err) => console.log('error', err))
-
+    // Print signal data
     this.p.on('signal', (data) => {
       console.log('SIGNAL', JSON.stringify(data))
     })
-
+    // Handle successful connection
     this.p.on('connect', () => {
       console.log('CONNECT')
       this.connected = true
     })
+    // Handle connection closure
     this.p.on('close', () => {
       console.log('CLOSED')
       this.connected = false
     })
-
+    // Handle recieved messages and data
     this.p.on('data', (data) => {
       this.console.log('Received: ' + data)
       const createChat = (text) => {
@@ -57,6 +65,7 @@ export default {
     })
   },
   methods: {
+    // On user submit to chat input form
     handleSubmit(event, text) {
       event.preventDefault()
       const createChat = (text) => ({
@@ -64,16 +73,19 @@ export default {
         uid: this.user?.uid,
         author: this.user?.name
       })
+      // Send message only when connected
       if (this.connected) {
         this.p.send(text)
         this.console.log('Sending to peer: ' + text)
       }
       this.messages = [...this.messages, createChat(text)]
     },
+    // Print when connecting
     handleConnect(event, text) {
       this.p.signal(text)
       this.console.log(text)
     },
+    // Set user as initiator or reciever
     handleInitiator(initiator) {
       this.p.initiator = initiator
       this.console.log(this.p)
@@ -86,6 +98,7 @@ export default {
   <div class="app">
     <ConnectForm @connect="handleConnect" @initiator="handleInitiator" />
     <div class="messages">
+      <!-- Displaying chat messages -->
       <Message
         v-for="message in messages"
         :key="message.uid"
@@ -96,10 +109,12 @@ export default {
       />
     </div>
 
+    <!-- Chat box component for sending messages -->
     <ChatBox class="chat-box" @submit-Chat="handleSubmit" />
   </div>
 </template>
 
+<!-- Styles -->
 <style>
 @font-face {
   font-family: 'Georama';
@@ -140,6 +155,7 @@ input {
 </style>
 
 <style scoped>
+/* App layout */
 .app {
   height: 100vh;
   display: flex;
@@ -152,10 +168,12 @@ input {
   padding: 1rem;
 }
 
+/* Spacing between messages */
 .message + .message {
   margin-top: 1rem;
 }
 
+/* Right-aligned messages */
 .message.right {
   margin-left: auto;
 }
