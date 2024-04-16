@@ -13,6 +13,10 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@apollo/server": "^4.10.2",
+    "@microsoft/eslint-formatter-sarif": "^2.1.7",
+    "@nestjs/apollo": "^12.1.0",
+    "@nestjs/graphql": "^12.1.1",
     "axios": "^1.6.8",
     "body-parser": "^1.20.2",
     "concurrently": "^8.2.2",
@@ -22,6 +26,7 @@
     "ejs": "^3.1.9",
     "express": "^4.19.2",
     "get-port": "^7.1.0",
+    "graphql": "^16.8.1",
     "nodemon": "^3.1.0",
     "portfinder": "^1.0.32",
     "simple-peer": "^9.11.1",
@@ -34,6 +39,7 @@
     "vue": "^3.4.21"
   },
   "devDependencies": {
+    "@eslint/js": "^9.0.0",
     "@rushstack/eslint-patch": "^1.3.3",
     "@tsconfig/node20": "^20.1.2",
     "@types/node": "^20.11.28",
@@ -41,11 +47,13 @@
     "@vue/eslint-config-prettier": "^8.0.0",
     "@vue/eslint-config-typescript": "^12.0.0",
     "@vue/tsconfig": "^0.5.1",
-    "eslint": "^8.49.0",
-    "eslint-plugin-vue": "^9.17.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.24.1",
+    "globals": "^15.0.0",
     "npm-run-all2": "^6.1.2",
     "prettier": "^3.0.3",
     "typescript": "~5.4.0",
+    "typescript-eslint": "^7.6.0",
     "vite": "^5.1.6",
     "vue-tsc": "^2.0.6"
   }
