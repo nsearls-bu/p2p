@@ -1,0 +1,15 @@
+name: Backend testing
+on: [push]
+jobs:
+  run-defined-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '21'
+      - run: npm install
+      - run: npm run test
