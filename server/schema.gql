@@ -1,0 +1,138 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""User entity representing a registered user"""
+type User {
+  """Unique identifier of the user"""
+  uid: ID!
+
+  """First name of the user"""
+  firstName: String!
+
+  """Last name of the user"""
+  lastName: String!
+
+  """Cell phone number of the user"""
+  cell: String!
+
+  """Email address of the user"""
+  email: String!
+
+  """Email address of the user"""
+  birthdate: DateTime!
+
+  """Optional image URL of the user"""
+  image: String
+
+  """Username chosen by the user"""
+  username: String!
+
+  """
+  Plaintext password - completely insecure - not included in this project
+  """
+  password: String!
+
+  """Street address"""
+  street: String
+
+  """City"""
+  city: String
+
+  """State"""
+  state: String
+
+  """Postal code"""
+  postalCode: String
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Chat {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Conversation {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Query {
+  users: [User!]!
+  user(username: ID!): User!
+  chats: [Chat!]!
+  chat(id: Int!): Chat!
+  conversations: [Conversation!]!
+  conversation(id: Int!): Conversation!
+}
+
+type Mutation {
+  createUser(CreateUser: CreateUser!): User!
+  updateUser(UpdateUser: UpdateUser!): User!
+  removeUser(username: Int!): User!
+  createChat(createChatInput: CreateChatInput!): Chat!
+  updateChat(updateChatInput: UpdateChatInput!): Chat!
+  removeChat(id: Int!): Chat!
+  createConversation(createConversationInput: CreateConversationInput!): Conversation!
+  updateConversation(updateConversationInput: UpdateConversationInput!): Conversation!
+  removeConversation(id: Int!): Conversation!
+}
+
+input CreateUser {
+  firstName: String!
+  lastName: String!
+  cell: String!
+  email: String!
+  image: String
+  birthday: DateTime
+  username: String!
+  password: String!
+  street: String
+  city: String
+  state: String
+  postalCode: String
+}
+
+input UpdateUser {
+  firstName: String
+  lastName: String
+  cell: String
+  email: String
+  image: String
+  birthday: DateTime
+  username: String
+  password: String
+  street: String
+  city: String
+  state: String
+  postalCode: String
+
+  """Create a user"""
+  uid: ID!
+}
+
+input CreateChatInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateChatInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateConversationInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateConversationInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}

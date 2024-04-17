@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String         @id @default(uuid())
+  firstName     String
+  lastName      String
+  cell          String
+  email         String         @unique
+  image         String?
+  birthday      DateTime?
+  username      String         @unique
+  password      String
+  street        String?
+  city          String?
+  state         String?
+  postalCode    String?
+  conversations Conversation[]
+}
+
+model Conversation {
+  id          String    @id @default(uuid())
+  users       User[]
+  name        String
+  dateCreated DateTime
+  messages    Message[]
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  senderID       String
+  recipientID    String
+  conversationID Conversation @relation(fields: [id], references: [id])
+  timeSend       DateTime     @default(now())
+}
