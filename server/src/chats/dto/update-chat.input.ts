@@ -1,8 +1,11 @@
 import { CreateChatInput } from './create-chat.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, Field, PartialType, OmitType } from '@nestjs/graphql';
 
 @InputType()
-export class UpdateChatInput extends PartialType(CreateChatInput) {
-  @Field(() => Int)
-  id: number;
+export class UpdateChatInput extends OmitType(PartialType(CreateChatInput), [
+  'recipientID',
+  'senderID',
+] as const) {
+  @Field(() => String)
+  id: string;
 }

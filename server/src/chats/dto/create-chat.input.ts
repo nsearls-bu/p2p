@@ -1,7 +1,11 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
 export class CreateChatInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  @Field({ description: 'ID of message sender' })
+  senderID: string;
+  @Field({ description: 'ID of message recipient' })
+  recipientID: string;
+  @Field({ description: 'Contents of message' })
+  messageContents: string;
 }

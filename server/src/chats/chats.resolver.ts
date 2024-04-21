@@ -14,13 +14,13 @@ export class ChatsResolver {
   }
 
   @Query(() => [Chat], { name: 'chats' })
-  findAll() {
-    return this.chatsService.findAll();
+  findFrom(@Args('senderID') senderID: string) {
+    return this.chatsService.findFrom(senderID);
   }
 
-  @Query(() => Chat, { name: 'chat' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.chatsService.findOne(id);
+  @Query(() => [Chat], { name: 'chats' })
+  findTo(@Args('recipientID') recipientID: string) {
+    return this.chatsService.findFrom(recipientID);
   }
 
   @Mutation(() => Chat)
@@ -29,7 +29,7 @@ export class ChatsResolver {
   }
 
   @Mutation(() => Chat)
-  removeChat(@Args('id', { type: () => Int }) id: number) {
+  removeChat(@Args('id') id: string) {
     return this.chatsService.remove(id);
   }
 }

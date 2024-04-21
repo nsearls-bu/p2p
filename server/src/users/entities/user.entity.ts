@@ -3,7 +3,7 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 @ObjectType({ description: 'User entity representing a registered user' })
 export class User {
   @Field(() => ID, { description: 'Unique identifier of the user' })
-  uid: string;
+  id: string;
 
   @Field({ description: 'First name of the user' })
   firstName: string;
@@ -42,4 +42,10 @@ export class User {
 
   @Field({ nullable: true, description: 'Postal code' })
   postalCode: string;
+
+  @Field(() => [String], {
+    nullable: true,
+    description: 'List of users conversations',
+  })
+  conversations: string[];
 }

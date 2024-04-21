@@ -20,8 +20,8 @@ export class UsersResolver {
   }
 
   @Query(() => User, { name: 'user' })
-  findOne(@Args('username', { type: () => ID }) uid: string) {
-    const res = this.usersService.findOne(uid);
+  findOne(@Args('username', { type: () => ID }) username: string) {
+    const res = this.usersService.findOne(username);
     return res;
   }
 

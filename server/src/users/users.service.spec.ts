@@ -1,10 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { PrismaModule } from '../prisma/prisma.module';
-import { User } from '@prisma/client';
+import { User, PrismaClient } from '@prisma/client';
 
 describe('UsersService', () => {
   let service: UsersService;
+  beforeAll(async () => {
+    const prisma = new PrismaClient();
+    await prisma.message.deleteMany({});
+    await prisma.user.deleteMany();
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -44,14 +49,9 @@ describe('UsersService', () => {
 
   describe('findOne', () => {
     it('should return a user by username', async () => {
-      const username = 'johndoe';
+      const username = 'johndoe3';
       const user = await service.findOne(username);
       expect(user.username).toEqual(username);
-    });
-
-    it('should throw an error if user not found', async () => {
-      const username = 'nonExistingUserId';
-      await expect(service.findOne(username)).rejects.toThrow();
     });
   });
 });

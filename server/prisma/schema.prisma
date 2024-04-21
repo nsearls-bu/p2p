@@ -14,34 +14,29 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(uuid())
-  firstName     String
-  lastName      String
-  cell          String
-  email         String         @unique
-  image         String?
-  birthday      DateTime?
-  username      String         @unique
-  password      String
-  street        String?
-  city          String?
-  state         String?
-  postalCode    String?
-  conversations Conversation[]
-}
-
-model Conversation {
-  id          String    @id @default(uuid())
-  users       User[]
-  name        String
-  dateCreated DateTime
-  messages    Message[]
+  id               String    @id @default(uuid())
+  firstName        String
+  lastName         String
+  cell             String
+  email            String    @unique
+  image            String?
+  birthday         DateTime?
+  username         String    @unique
+  password         String
+  street           String?
+  city             String?
+  state            String?
+  postalCode       String?
+  SentMessages     Message[] @relation("SentMessages")
+  RecievedMessages Message[] @relation("RecievedMessages")
 }
 
 model Message {
-  id             String       @id @default(uuid())
-  senderID       String
-  recipientID    String
-  conversationID Conversation @relation(fields: [id], references: [id])
-  timeSend       DateTime     @default(now())
+  id              String   @id @default(uuid())
+  sender          User     @relation(name: "SentMessages", fields: [senderID], references: [id])
+  senderID        String
+  recipient       User     @relation(name: "RecievedMessages", fields: [recipientID], references: [id])
+  recipientID     String
+  timeSent        DateTime @default(now())
+  messageContents String
 }

@@ -5,7 +5,7 @@
 """User entity representing a registered user"""
 type User {
   """Unique identifier of the user"""
-  uid: ID!
+  id: ID!
 
   """First name of the user"""
   firstName: String!
@@ -44,6 +44,9 @@ type User {
 
   """Postal code"""
   postalCode: String
+
+  """List of users conversations"""
+  conversations: [String!]
 }
 
 """
@@ -52,22 +55,26 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Chat {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
+  """ID for each chat"""
+  id: ID!
 
-type Conversation {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """ID of message sender"""
+  senderID: String!
+
+  """ID of message recipient"""
+  recipientID: String!
+
+  """Time message was sent"""
+  timeSent: DateTime!
+
+  """Message contents"""
+  messageContents: String!
 }
 
 type Query {
   users: [User!]!
   user(username: ID!): User!
-  chats: [Chat!]!
-  chat(id: Int!): Chat!
-  conversations: [Conversation!]!
-  conversation(id: Int!): Conversation!
+  chats(recipientID: String!): [Chat!]!
 }
 
 type Mutation {
@@ -76,10 +83,7 @@ type Mutation {
   removeUser(username: Int!): User!
   createChat(createChatInput: CreateChatInput!): Chat!
   updateChat(updateChatInput: UpdateChatInput!): Chat!
-  removeChat(id: Int!): Chat!
-  createConversation(createConversationInput: CreateConversationInput!): Conversation!
-  updateConversation(updateConversationInput: UpdateConversationInput!): Conversation!
-  removeConversation(id: Int!): Conversation!
+  removeChat(id: String!): Chat!
 }
 
 input CreateUser {
@@ -112,27 +116,22 @@ input UpdateUser {
   postalCode: String
 
   """Create a user"""
-  uid: ID!
+  id: ID!
 }
 
 input CreateChatInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  """ID of message sender"""
+  senderID: String!
+
+  """ID of message recipient"""
+  recipientID: String!
+
+  """Contents of message"""
+  messageContents: String!
 }
 
 input UpdateChatInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input CreateConversationInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateConversationInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  """Contents of message"""
+  messageContents: String
+  id: String!
 }
