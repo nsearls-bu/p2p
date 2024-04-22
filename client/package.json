@@ -13,10 +13,13 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@apollo/client": "^3.9.11",
     "@apollo/server": "^4.10.2",
     "@microsoft/eslint-formatter-sarif": "^2.1.7",
     "@nestjs/apollo": "^12.1.0",
     "@nestjs/graphql": "^12.1.1",
+    "@vue/apollo-composable": "^4.0.2",
+    "@vue/apollo-option": "^4.0.0",
     "axios": "^1.6.8",
     "body-parser": "^1.20.2",
     "concurrently": "^8.2.2",
@@ -27,6 +30,7 @@
     "express": "^4.19.2",
     "get-port": "^7.1.0",
     "graphql": "^16.8.1",
+    "graphql-tag": "^2.12.6",
     "nodemon": "^3.1.0",
     "portfinder": "^1.0.32",
     "simple-peer": "^9.11.1",

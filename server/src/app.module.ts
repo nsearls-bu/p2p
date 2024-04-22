@@ -5,12 +5,16 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UsersModule } from './users/users.module';
 import { ChatsModule } from './chats/chats.module';
+import { ActiveUsersModule } from './active_user/active_user.module';
 import { ApolloServerErrorCode } from '@apollo/server/errors';
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'schema.gql',
+      subscriptions: {
+        'graphql-ws': true,
+      },
       formatError: (formattedError, error) => {
         // Return a different error message
 
@@ -45,6 +49,7 @@ import { ApolloServerErrorCode } from '@apollo/server/errors';
     }),
     UsersModule,
     ChatsModule,
+    ActiveUsersModule,
   ],
 })
 export class AppModule {}

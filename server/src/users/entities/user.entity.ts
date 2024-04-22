@@ -42,10 +42,4 @@ export class User {
 
   @Field({ nullable: true, description: 'Postal code' })
   postalCode: string;
-
-  @Field(() => [String], {
-    nullable: true,
-    description: 'List of users conversations',
-  })
-  conversations: string[];
 }

@@ -44,9 +44,6 @@ type User {
 
   """Postal code"""
   postalCode: String
-
-  """List of users conversations"""
-  conversations: [String!]
 }
 
 """
@@ -71,10 +68,23 @@ type Chat {
   messageContents: String!
 }
 
+"""User entity representing a registered user"""
+type ActiveUser {
+  """Unique identifier of the user"""
+  userID: ID!
+
+  """active users username"""
+  username: String!
+
+  """When the user will expire"""
+  expiresIn: String!
+}
+
 type Query {
   users: [User!]!
   user(username: ID!): User!
   chats(recipientID: String!): [Chat!]!
+  active_user: [ActiveUser!]!
 }
 
 type Mutation {
@@ -84,6 +94,7 @@ type Mutation {
   createChat(createChatInput: CreateChatInput!): Chat!
   updateChat(updateChatInput: UpdateChatInput!): Chat!
   removeChat(id: String!): Chat!
+  createActiveUser(password: String!, username: String!): ActiveUser!
 }
 
 input CreateUser {

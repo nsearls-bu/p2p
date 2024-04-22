@@ -4,11 +4,11 @@ import { v4 as uuid } from 'uuid'
 import ChatBox from './components/ChatBox.vue'
 import Message from './components/Message.vue'
 import ConnectForm from './components/ConnectForm.vue'
-
+import LogInModal from './components/LogInModal.vue'
 export default {
   name: 'App',
   // Registering components used in the template
-  components: { ChatBox, Message, ConnectForm },
+  components: { ChatBox, Message, ConnectForm, LogInModal },
   // Computed properties
   computed: {
     console: () => console, // Access to console object for debugging
@@ -28,7 +28,8 @@ export default {
         config: { iceServers: [] }
       }
     }),
-    connected: false // Flag to indicate if connected to peer
+    connected: false, // Flag to indicate if connected to peer
+    showLoginModal: false
   }),
   mounted() {
     // Generating a unique user ID
@@ -89,6 +90,9 @@ export default {
     handleInitiator(initiator) {
       this.p.initiator = initiator
       this.console.log(this.p)
+    },
+    handleShowLoginModal() {
+      this.showLoginModal = !this.showLoginModal
     }
   }
 }
@@ -96,7 +100,12 @@ export default {
 
 <template>
   <div class="app">
-    <ConnectForm @connect="handleConnect" @initiator="handleInitiator" />
+    <LogInModal v-if="showLoginModal" @close="handleShowLoginModal" />
+
+    <div>
+      <ConnectForm @connect="handleConnect" @initiator="handleInitiator" />
+      <button class="LoginButton" @click="handleShowLoginModal">Login/Signup</button>
+    </div>
     <div class="messages">
       <!-- Displaying chat messages -->
       <Message
@@ -178,3 +187,5 @@ input {
   margin-left: auto;
 }
 </style>
+import type LogInModalVue from './components/LogInModal.vue'; import type LogInModalVue from
+'./components/LogInModal.vue';

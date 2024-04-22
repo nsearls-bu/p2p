@@ -14,21 +14,22 @@ datasource db {
 }
 
 model User {
-  id               String    @id @default(uuid())
+  id               String      @id @default(uuid())
   firstName        String
   lastName         String
   cell             String
-  email            String    @unique
+  email            String      @unique
   image            String?
   birthday         DateTime?
-  username         String    @unique
+  username         String      @unique
   password         String
   street           String?
   city             String?
   state            String?
   postalCode       String?
-  SentMessages     Message[] @relation("SentMessages")
-  RecievedMessages Message[] @relation("RecievedMessages")
+  SentMessages     Message[]   @relation("SentMessages")
+  RecievedMessages Message[]   @relation("RecievedMessages")
+  ActiveUser       ActiveUser?
 }
 
 model Message {
@@ -39,4 +40,12 @@ model Message {
   recipientID     String
   timeSent        DateTime @default(now())
   messageContents String
+}
+
+model ActiveUser {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userID], references: [id])
+  userID    String   @unique
+  username  String
+  expiresIn DateTime @default(now())
 }
