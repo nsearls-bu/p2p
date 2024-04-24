@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { ChatsModule } from './chats/chats.module';
 import { ActiveUsersModule } from './active_user/active_user.module';
 import { ApolloServerErrorCode } from '@apollo/server/errors';
+import { ConnectionsModule } from './connections/connections.module';
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
@@ -50,6 +51,7 @@ import { ApolloServerErrorCode } from '@apollo/server/errors';
     UsersModule,
     ChatsModule,
     ActiveUsersModule,
+    ConnectionsModule,
   ],
 })
 export class AppModule {}

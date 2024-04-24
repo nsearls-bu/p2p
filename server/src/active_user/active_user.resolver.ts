@@ -17,11 +17,21 @@ export class ActiveUserResolver {
       username,
       password,
     );
+    const active_users = await this.activeUserService.findAll();
+    this.pubSub.publish('newListActiveUsers', {
+      newListActiveUsers: active_users,
+    });
     return active_user;
+  }
+
+  @Subscription(() => [ActiveUser]!)
+  newListActiveUsers() {
+    return this.pubSub.asyncIterator('newListActiveUsers');
   }
 
   @Query(() => [ActiveUser], { name: 'active_user' })
   findAll() {
-    return this.activeUserService.findAll();
+    const active_users = this.activeUserService.findAll();
+    return active_users;
   }
 }

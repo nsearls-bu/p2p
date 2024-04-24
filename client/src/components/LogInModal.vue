@@ -6,31 +6,41 @@ export default {
     console: () => console, // Access to console object for debugging
     window: () => window // Access to window object
   },
-  setup() {
+  setup(props, context) {
     const { mutate: createUser } = useMutation(gql`
-      mutation {
+      mutation createUser(
+        $username: String!
+        $cell: String!
+        $password: String!
+        $email: String!
+        $firstName: String!
+        $lastName: String!
+      ) {
         createUser(
           CreateUser: {
-            username: "$username"
-            cell: "$cell"
-            password: "$password"
-            email: "$email"
-            firstName: "$firstName"
-            lastName: "$lastName"
+            username: $username
+            cell: $cell
+            password: $password
+            email: $email
+            firstName: $firstName
+            lastName: $lastName
           }
         ) {
           id
         }
       }
     `)
-    const { mutate: createActiveUser } = useMutation(gql`
-      mutation {
-        createActiveUser(username: "$username", password: "$password") {
+    const { mutate: createActiveUser, onDone } = useMutation(gql`
+      mutation createActiveUser($username: String!, $password: String!) {
+        createActiveUser(username: $username, password: $password) {
           username
+          expiresIn
         }
       }
     `)
-
+    onDone((res) => {
+      context.emit('handleLoggedIn', res.data)
+    })
     return { createUser, createActiveUser }
   },
   data() {
@@ -38,8 +48,8 @@ export default {
       username: '',
       password: '',
       cell: '',
-      firstname: '',
-      lastname: '',
+      firstName: '',
+      lastName: '',
       email: '',
       login_username: '',
       login_password: ''
@@ -52,8 +62,8 @@ export default {
           this.username === '' ||
           this.password === '' ||
           this.cell === '' ||
-          this.firstname === '' ||
-          this.lastname === '' ||
+          this.firstName === '' ||
+          this.lastName === '' ||
           this.email === ''
         )
       ) {
@@ -135,7 +145,7 @@ export default {
               First name
               <input
                 class="sign-up-input-form"
-                v-model="firstname"
+                v-model="firstName"
                 placeholder="First name"
                 type="text"
               />
@@ -144,7 +154,7 @@ export default {
               Last name
               <input
                 class="sign-up-input-form"
-                v-model="lastname"
+                v-model="lastName"
                 placeholder="Last name"
                 type="text"
               />

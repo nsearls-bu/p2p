@@ -22,7 +22,7 @@ const link = split(
   httpLink
 )
 
-const myApolloClient = new ApolloClient({
+export const myApolloClient = new ApolloClient({
   link,
   cache
 })

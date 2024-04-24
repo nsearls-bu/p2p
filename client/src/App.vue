@@ -5,65 +5,166 @@ import ChatBox from './components/ChatBox.vue'
 import Message from './components/Message.vue'
 import ConnectForm from './components/ConnectForm.vue'
 import LogInModal from './components/LogInModal.vue'
+import UserSearch from './components/UserSearch.vue'
+import { useMutation, useQuery, useSubscription } from '@vue/apollo-composable'
+import { gql } from 'graphql-tag'
+import { myApolloClient } from './main'
+import { provideApolloClient } from '@vue/apollo-composable'
 export default {
   name: 'App',
   // Registering components used in the template
-  components: { ChatBox, Message, ConnectForm, LogInModal },
+  components: { ChatBox, Message, ConnectForm, LogInModal, UserSearch },
   // Computed properties
   computed: {
     console: () => console, // Access to console object for debugging
     window: () => window // Access to window object
   },
+  setup() {
+    const { mutate: startConnection } = useMutation(gql`
+      mutation startConnection(
+        $initiatorUsername: String!
+        $recipientUsername: String!
+        $initiatorSDP: String!
+      ) {
+        startConnection(
+          initiatorUsername: $initiatorUsername
+          recipientUsername: $recipientUsername
+          initiatorSDP: $initiatorSDP
+        ) {
+          id
+        }
+      }
+    `)
+
+    const { mutate: respondToHandShake } = useMutation(gql`
+      mutation respondToHandShake(
+        $initiatorUsername: String!
+        $recipientUsername: String!
+        $answerSDP: String!
+      ) {
+        respondToHandShake(
+          initiatorUsername: $initiatorUsername
+          recipientUsername: $recipientUsername
+          answerSDP: $answerSDP
+        ) {
+          id
+        }
+      }
+    `)
+    return { startConnection, respondToHandShake }
+  },
+
+  watch: {
+    activeUser() {
+      const currentUser = Object.assign({}, this.activeUser)
+      if (currentUser !== null) {
+        const { onResult, loading } = provideApolloClient(myApolloClient)(() =>
+          useSubscription(
+            gql`
+              subscription waitForConnection($username: String!) {
+                waitForConnection(username: $username) {
+                  id
+                  initiatorSDP
+                  answerSDP
+                  initiatorUsername
+                  recipientUsername
+                }
+              }
+            `,
+            { username: currentUser.username }
+          )
+        )
+        onResult((res) => {
+          if (res.data.waitForConnection.recipientUsername === currentUser.username) {
+            if (res.data.waitForConnection.answerSDP === '') {
+              // If we are the recipient
+              this.connectedPeer = res.data.waitForConnection.initiatorUsername
+
+              this.peer = new SimplePeer({
+                // Peer connection configuration
+                initiator: false,
+                trickle: false,
+                channelConfig: { negotiated: true, id: 0 },
+                channelName: 'cool-channel',
+                config: {
+                  config: { iceServers: [] }
+                }
+              })
+              this.peer.signal(res.data.waitForConnection.initiatorSDP)
+              setTimeout(() => {
+                this.respondToHandShake({
+                  initiatorUsername: res.data.waitForConnection.initiatorUsername,
+                  recipientUsername: res.data.waitForConnection.recipientUsername,
+                  answerSDP: this.answerSDP
+                })
+              }, 500)
+            }
+          } else if (res.data.waitForConnection.initiatorUsername === currentUser.username) {
+            // If we initiated the connection
+            this.connectedPeer = res.data.waitForConnection.recipientUsername
+
+            if (res.data.waitForConnection.answerSDP !== '') {
+              this.peer.signal(res.data.waitForConnection.answerSDP)
+
+              // We should be connected
+            }
+          }
+        })
+      }
+    },
+    peer() {
+      this.peer.on('error', (err) => console.log('error', err))
+      // Print signal data
+      this.peer.on('signal', (data) => {
+        if (data.type == 'offer') {
+          this.initiatorSDP = JSON.stringify(data)
+        } else if (data.type == 'answer') {
+          this.answerSDP = JSON.stringify(data)
+        }
+      })
+      // Handle successful connection
+      this.peer.on('connect', () => {
+        console.log('CONNECT')
+        this.connected = true
+      })
+      // Handle connection closure
+      this.peer.on('close', () => {
+        console.log('CLOSED')
+        this.connected = false
+      })
+      // Handle recieved messages and data
+      this.peer.on('data', (data) => {
+        this.console.log('Received: ' + data)
+        const createChat = (text) => {
+          const decoded = new TextDecoder().decode(text)
+          return {
+            text: decoded,
+            uid: '-1',
+            author: 'someone else'
+          }
+        }
+        this.console.log(createChat(data))
+        this.messages = [...this.messages, createChat(data)]
+      })
+    }
+  },
+
   // Data initialization
   data: () => ({
     user: undefined, // Current user
     messages: [], // Array to store chat messages
-    p: new SimplePeer({
-      // Peer connection configuration
-      initiator: true,
-      trickle: false,
-      channelConfig: { negotiated: true, id: 0 },
-      channelName: 'cool-channel',
-      config: {
-        config: { iceServers: [] }
-      }
-    }),
+    peer: null,
+    initiatorSDP: '',
+    answerSDP: '',
     connected: false, // Flag to indicate if connected to peer
-    showLoginModal: false
+    showLoginModal: false,
+    activeUser: null,
+    connectedPeer: ''
   }),
   mounted() {
     // Generating a unique user ID
     this.user = { name: 'myname', uid: uuid() }
     // Print connection on error
-    this.p.on('error', (err) => console.log('error', err))
-    // Print signal data
-    this.p.on('signal', (data) => {
-      console.log('SIGNAL', JSON.stringify(data))
-    })
-    // Handle successful connection
-    this.p.on('connect', () => {
-      console.log('CONNECT')
-      this.connected = true
-    })
-    // Handle connection closure
-    this.p.on('close', () => {
-      console.log('CLOSED')
-      this.connected = false
-    })
-    // Handle recieved messages and data
-    this.p.on('data', (data) => {
-      this.console.log('Received: ' + data)
-      const createChat = (text) => {
-        const decoded = new TextDecoder().decode(text)
-        return {
-          text: decoded,
-          uid: '-1',
-          author: 'someone else'
-        }
-      }
-      this.console.log(createChat(data))
-      this.messages = [...this.messages, createChat(data)]
-    })
   },
   methods: {
     // On user submit to chat input form
@@ -76,23 +177,40 @@ export default {
       })
       // Send message only when connected
       if (this.connected) {
-        this.p.send(text)
+        this.peer.send(text)
         this.console.log('Sending to peer: ' + text)
       }
       this.messages = [...this.messages, createChat(text)]
     },
-    // Print when connecting
-    handleConnect(event, text) {
-      this.p.signal(text)
-      this.console.log(text)
-    },
-    // Set user as initiator or reciever
-    handleInitiator(initiator) {
-      this.p.initiator = initiator
-      this.console.log(this.p)
-    },
+
     handleShowLoginModal() {
       this.showLoginModal = !this.showLoginModal
+    },
+    handleLoggedIn(data) {
+      this.activeUser = Object.assign({}, data.createActiveUser)
+    },
+    handleSetUpConversation(activeUser, username2) {
+      const user1 = Object.assign({}, activeUser)
+
+      this.peer = new SimplePeer({
+        // Peer connection configuration
+        initiator: true,
+        trickle: false,
+        channelConfig: { negotiated: true, id: 0 },
+        channelName: 'cool-channel',
+        config: {
+          config: { iceServers: [] }
+        }
+      })
+      setTimeout(
+        () =>
+          this.startConnection({
+            initiatorUsername: user1.username,
+            recipientUsername: username2,
+            initiatorSDP: this.initiatorSDP
+          }),
+        500
+      )
     }
   }
 }
@@ -100,10 +218,22 @@ export default {
 
 <template>
   <div class="app">
-    <LogInModal v-if="showLoginModal" @close="handleShowLoginModal" />
-
     <div>
-      <ConnectForm @connect="handleConnect" @initiator="handleInitiator" />
+      <LogInModal
+        v-if="showLoginModal"
+        @handleLoggedIn="handleLoggedIn"
+        @close="handleShowLoginModal"
+      />
+      <UserSearch
+        :activeUser="this.activeUser"
+        class="user-search"
+        @setUpConversation="handleSetUpConversation"
+      />
+
+      <div v-if="this.activeUser === null">Not logged in</div>
+      <div v-else>Logged in as {{ this.activeUser.username }}</div>
+    </div>
+    <div>
       <button class="LoginButton" @click="handleShowLoginModal">Login/Signup</button>
     </div>
     <div class="messages">
@@ -188,4 +318,6 @@ input {
 }
 </style>
 import type LogInModalVue from './components/LogInModal.vue'; import type LogInModalVue from
-'./components/LogInModal.vue';
+'./components/LogInModal.vue';import type { watch } from 'vue'import type { myApolloClient } from
+'./main'import type { myApolloClient } from './main'import type { myApolloClient } from
+'./main'import type { myApolloClient } from './main'import type { myApolloClient } from './main'

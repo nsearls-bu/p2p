@@ -80,6 +80,24 @@ type ActiveUser {
   expiresIn: String!
 }
 
+"""Represents a connection"""
+type Connection {
+  """Unique identifier of the user"""
+  id: ID!
+
+  """Part 1 of webrtc handshake"""
+  initiatorSDP: String
+
+  """Part 2 of webrtc handshake"""
+  answerSDP: String
+
+  """initiators username"""
+  initiatorUsername: String!
+
+  """recipient username"""
+  recipientUsername: String!
+}
+
 type Query {
   users: [User!]!
   user(username: ID!): User!
@@ -95,6 +113,8 @@ type Mutation {
   updateChat(updateChatInput: UpdateChatInput!): Chat!
   removeChat(id: String!): Chat!
   createActiveUser(password: String!, username: String!): ActiveUser!
+  startConnection(initiatorUsername: String!, recipientUsername: String!, initiatorSDP: String!): Connection!
+  respondToHandShake(answerSDP: String!, initiatorUsername: String!, recipientUsername: String!): Connection!
 }
 
 input CreateUser {
@@ -145,4 +165,9 @@ input UpdateChatInput {
   """Contents of message"""
   messageContents: String
   id: String!
+}
+
+type Subscription {
+  newListActiveUsers: [ActiveUser!]!
+  waitForConnection(username: String!): Connection!
 }

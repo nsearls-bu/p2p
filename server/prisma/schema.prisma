@@ -49,3 +49,13 @@ model ActiveUser {
   username  String
   expiresIn DateTime @default(now())
 }
+
+model Connection {
+  id                String  @default(uuid())
+  initiatorSDP      String?
+  answerSDP         String?
+  initiatorUsername String
+  recipientUsername String
+
+  @@id([initiatorUsername, recipientUsername])
+}
