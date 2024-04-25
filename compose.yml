@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  frontend:
+    build:
+      context: ./client
+    ports:
+      - 5173:5173
+
+  backend:
+    build:
+      context: ./server
+    image: p2p/backend:latest
+    ports:
+      - 3000:3000
+  testing:
+    build:
+      context: ./server
+    image: p2p/backend:latest
+    command: "npm run test"

@@ -13,9 +13,11 @@ import { ConnectionsModule } from './connections/connections.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'schema.gql',
+
       subscriptions: {
         'graphql-ws': true,
       },
+
       formatError: (formattedError, error) => {
         // Return a different error message
 

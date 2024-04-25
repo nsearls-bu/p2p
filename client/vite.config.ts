@@ -15,5 +15,6 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  define: { global: {} }
+  define: { global: {} },
+  server: { host: true }
 })

@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -34,9 +35,9 @@ model User {
 
 model Message {
   id              String   @id @default(uuid())
-  sender          User     @relation(name: "SentMessages", fields: [senderID], references: [id])
+  sender          User     @relation(name: "SentMessages", fields: [senderID], references: [id], onDelete: Cascade)
   senderID        String
-  recipient       User     @relation(name: "RecievedMessages", fields: [recipientID], references: [id])
+  recipient       User     @relation(name: "RecievedMessages", fields: [recipientID], references: [id], onDelete: Cascade)
   recipientID     String
   timeSent        DateTime @default(now())
   messageContents String

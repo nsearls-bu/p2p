@@ -7,7 +7,9 @@ describe('UsersService', () => {
   let service: UsersService;
   beforeAll(async () => {
     const prisma = new PrismaClient();
-    await prisma.message.deleteMany({});
+    await prisma.message.deleteMany();
+    await prisma.connection.deleteMany();
+    await prisma.activeUser.deleteMany();
     await prisma.user.deleteMany();
   });
 

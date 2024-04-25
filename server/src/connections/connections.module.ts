@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConnectionsService } from './connections.service';
 import { ConnectionsResolver } from './connections.resolver';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
   imports: [PrismaModule],
