@@ -3,7 +3,7 @@
 For EC530 Final Project. This application is a browser based chatting application that used a GraphQL backend server for WebRTC signalling and chat storage/user management etc. All chatting is still done directly through WebRTC peers.
 
 Currently there is a bug in Firefox that makes connections fail between two firefox clients. Please try only with Chrome. Additionally,
-STUN/TURN is not properly configured, so all communication must be on a single private network.
+STUN/TURN is not properly configured, so all communication must be on a single private network. Please view the demo for a quick demonstration
 
 ## Installation
 
@@ -13,6 +13,12 @@ To install and run the P2P Chat Application, follow these steps:
 2. Navigate to the project directory: `cd p2p`
 3. Ensure Docker is installed on your machine.
 4. Run Docker Compose to start the containers: `docker compose build && docker compose up -d`
+
+## Signaling protocol explanation
+
+WebRTC does not define a way for how peers actually connect. This gives us a lot of flexibility in implementation. The WebRTC handshake has 3 parts. Client 1, the initiator, generates a SDP offer signal. Somehow, this signal is transferred to the intented recipient. Using the offer, they generate an answer SDP, which is sent to the initiator. Once client 1 uses the answer SDP signal - the connection is established.
+
+I implemented this protocol using GraphQL subscriptions over websockets. When the user logs in, they are immediately subscribed to a GraphQL API that returns all other peers offers directed towards that user. If a user recieves an offer, they immediately return an answer to that same subscription, updating the initiating client, who can in turn establish a connection. I don't think this implementation would allow for more than one user to connect at the same time - I haven't tested that possibility.
 
 ## Usage
 
@@ -33,4 +39,4 @@ Note that testing for the backend is done through Jest is contained in ".spec.ts
 
 ## Author
 
-- Ned Searls (nsearls@bu.edu)
+- Ned Searls (<nsearls@bu.edu>)
